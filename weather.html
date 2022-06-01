@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Погода</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,900" rel="stylesheet">
+</head>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-shadow: .1em .1em 0 rgba(0,0,0,0.3);
+        font-size: 1.3em;
+        height: 100vh;
+        background-image: linear-gradient(to right top, #99bbcb, #a5c7d7, #b1d4e2, #bde0ee, #c9edfa);
+    }
+    h1 {
+        margin: 0 auto;
+        font-size: 2.2em;
+        text-align: center;
+        color: #fff;
+        font-size: 5em;
+    }
+    body.sunny {
+        background-image: linear-gradient(to right top, #ff4e50, #ff713e, #ff932b, #ffb41d, #f9d423);
+    }
+    body.cloudy {
+        background-image: linear-gradient(to right top, #63747c, #71858e, #7f96a0, #8da8b2, #9bbac5);
+    }
+    body.rainy {
+        background-image: linear-gradient(to right top, #637c7b, #718e8c, #7ea09e, #8db2b0, #9bc5c3);
+    }
+    .search{
+        margin: -100px 0 0 150px;
+        box-shadow: .1em .1em 0 rgba(0,0,0,0.3);
+        text-shadow: .1em .1em 0 rgba(0,0,0,0.3);
+    }
+    .spinner{
+        margin: 1em 0 0 6em;
+    }
+</style>
+
+<body>
+<div class="bg"></div>
+<div>
+    <h1>Weather</h1>
+    <input class="search" type="text" placeholder="Enter City Name" id="search">
+    <button class="button" type="submit" id="button" onclick="weatherBallon()">Search</button>
+    <div class="description" id="description"></div>
+    <h1 id="temp"></h1>
+    <img id="spinner" class="spinner" src="Spinner-1.1s-214px.gif" style="display: none">
+    <div class ="locations" id="location"></div>
+</div>
+<script>
+    const spinner = document.getElementById("spinner");
+    const button = document.getElementById("button");
+    function weatherBallon() {
+        spinner.style.display = "inline";
+        button.disabled = true;
+        const key = 'b11270b2823a579091b5d884193d70bb';
+        let cityName = document.getElementById("search");
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName.value}&appid=${key}`)
+            .then(function(response) { return response.json() })
+            .then(function(data) {
+                drawWeather(data);
+            })
+            .catch(function() {
+            });
+    }
+    function drawWeather(data) {
+        let celcius = Math.round(parseFloat(data.main.temp)-273.15);
+        let description = data.weather[0].description;
+        spinner.style.display = "none";
+        button.disabled = false;
+        document.getElementById('description').innerHTML = description;
+        document.getElementById('temp').innerHTML = celcius + '&deg;';
+        document.getElementById('location').innerHTML = data.name;
+
+        if( description.indexOf('rain') > 0 ) {
+            document.body.className = 'rainy';
+        } else if( description.indexOf('cloud') > 0 ) {
+            document.body.className = 'cloudy';
+        } else if( description.indexOf('sunny') > 0 ) {
+            document.body.className = 'sunny';
+        } else {
+            document.body.className = 'clear';
+        }
+    }
+
+</script>
+</body>
+</html>
+
+
+
