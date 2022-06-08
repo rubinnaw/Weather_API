@@ -47,21 +47,28 @@
 <body>
 <div class="bg"></div>
 <div>
+    <div class="time" id="time"></div>
     <h1>Weather</h1>
     <input class="search" type="text" placeholder="Enter City Name" id="search">
     <button class="button" type="submit" id="button" onclick="weatherBallon()">Search</button>
     <div class="description" id="description"></div>
     <h1 id="temp"></h1>
+    <div class="humidity" id="humidity"></div>
+    <div class="pressure" id="pressure"></div>
     <img id="spinner" class="spinner" src="Spinner-1.1s-214px.gif" style="display: none">
     <div class ="locations" id="location"></div>
+    <biv class="latitude" id="latitude"></biv>
+    <biv class="longitude" id="longitude"></biv>
 </div>
+
 <script>
     const spinner = document.getElementById("spinner");
     const button = document.getElementById("button");
     function weatherBallon() {
+
         spinner.style.display = "inline";
         button.disabled = true;
-        const key = 'b11270b2823a579091b5d884193d70bb';
+        const key = 'f22e5831e0ec1e92cca9a3ae19766164';
         let cityName = document.getElementById("search");
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName.value}&appid=${key}`)
             .then(function(response) { return response.json() })
@@ -74,11 +81,17 @@
     function drawWeather(data) {
         let celcius = Math.round(parseFloat(data.main.temp)-273.15);
         let description = data.weather[0].description;
+
         spinner.style.display = "none";
         button.disabled = false;
+
         document.getElementById('description').innerHTML = description;
         document.getElementById('temp').innerHTML = celcius + '&deg;';
+        document.getElementById('humidity').innerHTML = 'humidity: ' + data.main.humidity;
+        document.getElementById('pressure').innerHTML = 'pressure: ' + data.main.pressure;
         document.getElementById('location').innerHTML = data.name;
+        document.getElementById('latitude').innerHTML = 'latitude: ' + data.coord.lat;
+        document.getElementById('longitude').innerHTML = 'longitude: ' + data.coord.lon;
 
         if( description.indexOf('rain') > 0 ) {
             document.body.className = 'rainy';
@@ -90,10 +103,23 @@
             document.body.className = 'clear';
         }
     }
-
+</script>
+<script>
+    setInterval(function () {
+        let time = new Date();
+        let options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+            timezone: 'UTC',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        }
+        let clock = document.getElementById("time");
+        clock.innerHTML = time.toLocaleString("en-US",options);
+    }, 1000);
 </script>
 </body>
 </html>
-
-
-
